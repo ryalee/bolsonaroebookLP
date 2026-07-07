@@ -1,0 +1,722 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Template — Landing Page de Produto Digital</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,500&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+  /* ============================================================
+     TOKENS DE DESIGN — troque aqui para mudar a identidade toda
+     ============================================================ */
+  :root{
+    --ink:        #14231C;   /* fundo escuro (seção de conteúdo) */
+    --ink-2:      #1C2E24;   /* variação do escuro, para cards */
+    --paper:      #F6F2E9;   /* fundo claro (papel) */
+    --paper-2:    #EFE9DA;   /* fundo claro secundário */
+    --text:       #1B1B18;   /* texto principal sobre papel */
+    --text-soft:  #5B5A52;   /* texto secundário sobre papel */
+    --brass:      #B8863B;   /* dourado/latão — cor de destaque */
+    --brass-dark: #8F6526;
+    --oxblood:    #7A2E2E;   /* vermelho escuro — urgência/preço riscado */
+
+    --font-display: 'Fraunces', Georgia, serif;
+    --font-body:    'Inter', -apple-system, sans-serif;
+    --font-mono:    'IBM Plex Mono', monospace;
+
+    --radius: 2px;           /* cantos quase retos = tom "documento oficial" */
+    --container: 1180px;
+  }
+
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    background:var(--paper);
+    color:var(--text);
+    font-family:var(--font-body);
+    -webkit-font-smoothing:antialiased;
+  }
+  img{max-width:100%;display:block;}
+  a{color:inherit;}
+  .container{max-width:var(--container);margin:0 auto;padding:0 32px;}
+  .eyebrow{
+    font-family:var(--font-mono);
+    font-size:12px;
+    letter-spacing:.14em;
+    text-transform:uppercase;
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+  }
+  .eyebrow::before{
+    content:"";
+    width:14px;height:3px;
+    background:var(--brass);
+    display:inline-block;
+  }
+  .btn{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    gap:10px;
+    font-family:var(--font-body);
+    font-weight:700;
+    font-size:15px;
+    letter-spacing:.03em;
+    text-transform:uppercase;
+    padding:18px 34px;
+    border-radius:var(--radius);
+    border:none;
+    cursor:pointer;
+    text-decoration:none;
+    transition:transform .18s ease, box-shadow .18s ease, background .18s ease;
+  }
+  .btn:focus-visible{outline:3px solid var(--brass);outline-offset:3px;}
+  .btn-primary{
+    background:var(--ink);
+    color:var(--paper);
+  }
+  .btn-primary:hover{
+    background:#0D1712;
+    transform:translateY(-2px);
+    box-shadow:0 12px 24px -10px rgba(20,35,28,.45);
+  }
+  .btn-block{width:100%;}
+
+  /* ---------- reveal-on-scroll ---------- */
+  .reveal{opacity:0;transform:translateY(22px);transition:opacity .7s ease, transform .7s ease;}
+  .reveal.is-visible{opacity:1;transform:translateY(0);}
+  @media (prefers-reduced-motion: reduce){
+    .reveal{opacity:1;transform:none;transition:none;}
+    html{scroll-behavior:auto;}
+  }
+
+  /* ============================================================
+     BARRA DE OFERTA (topo)
+     ============================================================ */
+  .offer-bar{
+    background:var(--ink);
+    color:var(--paper);
+    text-align:center;
+    padding:11px 16px;
+    font-family:var(--font-mono);
+    font-size:12.5px;
+    letter-spacing:.06em;
+  }
+  .offer-bar strong{color:var(--brass);}
+  .offer-bar .strike{text-decoration:line-through;opacity:.55;margin:0 4px;}
+  .offer-bar .countdown{
+    display:inline-flex;gap:6px;margin-left:10px;font-weight:700;color:var(--brass);
+  }
+
+  /* ============================================================
+     HERO
+     ============================================================ */
+  .hero{
+    padding:88px 0 96px;
+  }
+  .hero .container{
+    display:grid;
+    grid-template-columns:1.05fr .95fr;
+    gap:72px;
+    align-items:center;
+  }
+  .hero h1{
+    font-family:var(--font-display);
+    font-style:italic;
+    font-weight:500;
+    font-size:clamp(38px, 4.6vw, 58px);
+    line-height:1.03;
+    margin:18px 0 4px;
+    color:var(--ink);
+  }
+  .hero h2{
+    font-family:var(--font-body);
+    font-weight:700;
+    font-size:clamp(22px, 2.6vw, 30px);
+    letter-spacing:-.01em;
+    line-height:1.15;
+    margin:0 0 26px;
+    text-transform:uppercase;
+    color:var(--ink);
+  }
+  .hero p.desc{
+    font-size:17px;
+    line-height:1.65;
+    color:var(--text-soft);
+    max-width:46ch;
+    margin:0 0 36px;
+  }
+  .price-row{
+    display:flex;
+    align-items:flex-end;
+    gap:20px;
+    margin-bottom:28px;
+    flex-wrap:wrap;
+  }
+  .price-old{
+    font-family:var(--font-mono);
+    font-size:14px;
+    color:var(--text-soft);
+    text-decoration:line-through;
+    margin-bottom:6px;
+  }
+  .price-new{
+    font-family:var(--font-display);
+    font-weight:600;
+    font-size:44px;
+    color:var(--oxblood);
+    line-height:1;
+  }
+  .price-new sup{font-size:.5em;top:-1em;}
+  .cta-group{display:flex;align-items:center;gap:20px;flex-wrap:wrap;margin-bottom:22px;}
+  .trust-row{
+    display:flex;gap:26px;flex-wrap:wrap;
+    font-size:13px;color:var(--text-soft);
+  }
+  .trust-row span{display:inline-flex;align-items:center;gap:7px;}
+  .trust-row svg{flex:none;}
+
+  /* -- placeholder de capa / imagem do produto -- */
+  .cover-wrap{position:relative;}
+  .cover{
+    position:relative;
+    aspect-ratio:3/4.35;
+    background:
+      repeating-linear-gradient(135deg, rgba(20,35,28,.05) 0 2px, transparent 2px 14px),
+      linear-gradient(160deg, var(--ink-2), var(--ink));
+    border:1px solid rgba(184,134,59,.35);
+    border-radius:var(--radius);
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    gap:14px;
+    text-align:center;
+    color:rgba(246,242,233,.55);
+    padding:40px;
+    box-shadow:0 30px 60px -25px rgba(20,35,28,.5);
+  }
+  .cover svg{opacity:.8;}
+  .cover .cover-label{
+    font-family:var(--font-mono);
+    font-size:12px;
+    letter-spacing:.08em;
+    text-transform:uppercase;
+    line-height:1.6;
+  }
+  .cover .cover-title{
+    font-family:var(--font-display);
+    font-style:italic;
+    font-size:22px;
+    color:var(--paper);
+    margin-top:4px;
+  }
+  .seal{
+    position:absolute;
+    bottom:-18px;
+    right:-18px;
+    width:104px;height:104px;
+    border-radius:50%;
+    background:var(--brass);
+    color:var(--ink);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    text-align:center;
+    font-family:var(--font-mono);
+    font-size:10.5px;
+    letter-spacing:.06em;
+    text-transform:uppercase;
+    line-height:1.35;
+    transform:rotate(-9deg);
+    box-shadow:0 14px 26px -10px rgba(0,0,0,.4);
+    border:2px dashed rgba(20,35,28,.35);
+  }
+
+  /* ============================================================
+     SEÇÃO "O QUE VOCÊ VAI ENCONTRAR" — fundo escuro
+     ============================================================ */
+  .contents{
+    background:var(--ink);
+    color:var(--paper);
+    padding:96px 0;
+  }
+  .contents h3{
+    font-family:var(--font-display);
+    font-style:italic;
+    font-weight:500;
+    font-size:clamp(28px,3.4vw,38px);
+    text-align:center;
+    margin:0 0 64px;
+  }
+  .contents-grid{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:0;
+  }
+  .contents-grid > div{
+    padding:0 32px;
+    border-left:1px solid rgba(246,242,233,.14);
+  }
+  .contents-grid > div:first-child{border-left:none;padding-left:0;}
+  .contents-grid > div:last-child{padding-right:0;}
+  .item-index{
+    font-family:var(--font-mono);
+    color:var(--brass);
+    font-size:13px;
+    letter-spacing:.1em;
+    display:block;
+    margin-bottom:18px;
+    padding-bottom:18px;
+    border-bottom:1px solid rgba(246,242,233,.14);
+  }
+  .contents-grid h4{
+    font-size:15px;
+    text-transform:uppercase;
+    letter-spacing:.04em;
+    margin:0 0 12px;
+  }
+  .contents-grid p{
+    font-size:14.5px;
+    line-height:1.65;
+    color:rgba(246,242,233,.62);
+    margin:0;
+  }
+
+  /* ============================================================
+     GARANTIA + BENEFÍCIOS — fundo claro
+     ============================================================ */
+  .trust-section{
+    background:var(--paper-2);
+    padding:100px 0;
+  }
+  .trust-section .container{
+    display:grid;
+    grid-template-columns:.95fr 1.05fr;
+    gap:64px;
+    align-items:start;
+  }
+  .guarantee-icon{
+    width:56px;height:56px;
+    border-radius:50%;
+    border:1.5px solid var(--ink);
+    display:flex;align-items:center;justify-content:center;
+    margin-bottom:26px;
+  }
+  .trust-section h3{
+    font-family:var(--font-display);
+    font-style:italic;
+    font-weight:500;
+    font-size:30px;
+    margin:0 0 18px;
+  }
+  .trust-section .guarantee-copy p{
+    font-size:15.5px;
+    line-height:1.75;
+    color:var(--text-soft);
+    max-width:46ch;
+  }
+  .benefit-grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:1px;
+    background:rgba(20,35,28,.12);
+  }
+  .benefit-card{
+    background:var(--paper);
+    padding:30px 28px;
+  }
+  .benefit-card svg{margin-bottom:16px;}
+  .benefit-card h5{
+    font-size:14px;
+    text-transform:uppercase;
+    letter-spacing:.03em;
+    margin:0 0 8px;
+  }
+  .benefit-card p{
+    font-size:13.5px;
+    line-height:1.6;
+    color:var(--text-soft);
+    margin:0;
+  }
+
+  /* ============================================================
+     CTA FINAL
+     ============================================================ */
+  .final-cta{
+    padding:110px 0 100px;
+    text-align:center;
+  }
+  .final-cta .eyebrow{justify-content:center;}
+  .final-cta h3{
+    font-family:var(--font-display);
+    font-style:italic;
+    font-weight:500;
+    font-size:clamp(24px,3vw,32px);
+    max-width:20ch;
+    margin:20px auto 44px;
+  }
+  .final-price-old{
+    font-family:var(--font-mono);
+    font-size:13px;
+    letter-spacing:.08em;
+    text-transform:uppercase;
+    color:var(--text-soft);
+    margin-bottom:6px;
+  }
+  .final-price-new{
+    font-family:var(--font-display);
+    font-weight:700;
+    font-size:56px;
+    color:var(--text);
+    line-height:1;
+  }
+  .final-price-tag{
+    font-family:var(--font-mono);
+    font-size:12px;
+    letter-spacing:.1em;
+    text-transform:uppercase;
+    color:var(--brass-dark);
+    margin:8px 0 40px;
+  }
+  .final-cta .btn{max-width:420px;width:100%;margin:0 auto;}
+  .final-microcopy{
+    margin-top:18px;
+    font-family:var(--font-mono);
+    font-size:11.5px;
+    letter-spacing:.08em;
+    text-transform:uppercase;
+    color:var(--text-soft);
+  }
+
+  /* ============================================================
+     FOOTER
+     ============================================================ */
+  footer{
+    border-top:1px solid rgba(20,35,28,.12);
+    padding:30px 0;
+  }
+  footer .container{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    flex-wrap:wrap;
+    gap:12px;
+  }
+  .brandmark{
+    font-family:var(--font-mono);
+    font-size:12px;
+    letter-spacing:.1em;
+    text-transform:uppercase;
+  }
+  .brandmark strong{color:var(--brass-dark);}
+  footer .legal{
+    font-family:var(--font-mono);
+    font-size:11px;
+    color:var(--text-soft);
+    letter-spacing:.04em;
+  }
+  footer .legal-links{display:flex;gap:22px;}
+  footer .legal-links a{font-family:var(--font-mono);font-size:11px;letter-spacing:.04em;text-decoration:none;color:var(--text-soft);}
+  footer .legal-links a:hover{color:var(--text);}
+
+  /* ============================================================
+     RESPONSIVO
+     ============================================================ */
+  @media (max-width:920px){
+    .hero .container{grid-template-columns:1fr;gap:48px;}
+    .hero{padding:56px 0 64px;}
+    .cover-wrap{max-width:340px;margin:0 auto;order:-1;}
+    .contents-grid{grid-template-columns:1fr;gap:36px;}
+    .contents-grid > div{border-left:none;padding:0;border-top:1px solid rgba(246,242,233,.14);padding-top:32px;}
+    .contents-grid > div:first-child{border-top:none;padding-top:0;}
+    .trust-section .container{grid-template-columns:1fr;gap:48px;}
+    .benefit-grid{grid-template-columns:1fr 1fr;}
+    footer .container{flex-direction:column;text-align:center;}
+    footer .legal-links{justify-content:center;}
+  }
+  @media (max-width:520px){
+    .container{padding:0 20px;}
+    .price-new{font-size:36px;}
+    .final-price-new{font-size:42px;}
+    .benefit-grid{grid-template-columns:1fr;}
+    .offer-bar{font-size:11px;}
+  }
+</style>
+</head>
+<body>
+
+  <!-- ============================================================
+       BARRA DE OFERTA
+       ============================================================ -->
+  <div class="offer-bar">
+    OFERTA POR TEMPO LIMITADO: DE <span class="strike" id="bar-old-price"></span>
+    POR APENAS <strong id="bar-new-price"></strong>
+    <span class="countdown" id="countdown">00:00:00</span>
+  </div>
+
+  <!-- ============================================================
+       HERO
+       ============================================================ -->
+  <section class="hero">
+    <div class="container">
+      <div class="reveal">
+        <span class="eyebrow" id="hero-eyebrow">CATEGORIA DO PRODUTO</span>
+        <h1 id="hero-title">Título do Produto</h1>
+        <h2 id="hero-subtitle">SUBTÍTULO EM DESTAQUE</h2>
+        <p class="desc" id="hero-desc">
+          Uma frase curta descrevendo a promessa central do produto: o que a pessoa
+          vai entender, resolver ou conseguir ao final.
+        </p>
+
+        <div class="price-row">
+          <div>
+            <div class="price-old">De <span id="price-old-1"></span></div>
+            <div class="price-new"><sup>R$</sup><span id="price-new-1"></span></div>
+          </div>
+        </div>
+
+        <div class="cta-group">
+          <a href="#comprar" class="btn btn-primary" id="cta-hero">Adquirir agora</a>
+        </div>
+
+        <div class="trust-row">
+          <span>
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 15V3M12 15l-4-4M12 15l4-4M2 17l.6 2.4A2 2 0 0 0 4.5 21h15a2 2 0 0 0 1.9-1.6L22 17"/></svg>
+            Download imediato em PDF
+          </span>
+          <span>
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
+            Acesso vitalício
+          </span>
+        </div>
+      </div>
+
+      <div class="cover-wrap reveal"> 
+        <img src="capa.png" alt="Capa do produto">
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       O QUE VOCÊ VAI ENCONTRAR
+       ============================================================ -->
+  <section class="contents">
+    <div class="container">
+      <h3 id="contents-title">O que você vai encontrar</h3>
+      <div class="contents-grid" id="contents-grid"><!-- preenchido via JS --></div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       GARANTIA + BENEFÍCIOS
+       ============================================================ -->
+  <section class="trust-section">
+    <div class="container">
+      <div class="reveal">
+        <div class="guarantee-icon">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 2l8 4v6c0 5-3.4 8.4-8 10-4.6-1.6-8-5-8-10V6l8-4z"/></svg>
+        </div>
+        <h3 id="guarantee-title">Garantia de satisfação</h3>
+        <div class="guarantee-copy">
+          <p id="guarantee-text">
+            Se por qualquer motivo o conteúdo não atender às suas expectativas,
+            oferecemos reembolso total dentro do prazo estabelecido — sem perguntas.
+          </p>
+        </div>
+      </div>
+      <div class="benefit-grid reveal" id="benefit-grid"><!-- preenchido via JS --></div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       CTA FINAL
+       ============================================================ -->
+  <section class="final-cta" id="comprar">
+    <div class="container reveal">
+      <span class="eyebrow" id="final-eyebrow">CATEGORIA DO PRODUTO</span>
+      <h3 id="final-title">Garanta sua cópia agora mesmo.</h3>
+      <div class="final-price-old">De <span id="price-old-2"></span> por</div>
+      <div class="final-price-new">R$ <span id="price-new-2"></span></div>
+      <div class="final-price-tag" id="final-tag">Oferta de lançamento</div>
+      <a href="#" class="btn btn-primary" id="cta-final">Quero garantir o meu</a>
+      <div class="final-microcopy" id="final-microcopy">Pagamento seguro · Entrega instantânea · Acesso vitalício</div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       FOOTER
+       ============================================================ -->
+  <footer>
+    <div class="container">
+      <div class="brandmark" id="footer-brand">MARCA <strong>DO PRODUTO</strong></div>
+      <div class="legal">
+        <span id="footer-copy">© 2026 · Todos os direitos reservados</span>
+      </div>
+      <div class="legal-links">
+        <a href="#">Privacidade</a>
+        <a href="#">Termos</a>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+  /* ============================================================
+     CONFIGURAÇÃO — edite só este objeto para trocar todo o
+     conteúdo da página (textos, preços, ícones, prazos).
+     ============================================================ */
+  const CONFIG = {
+    eyebrow: "Guia Digital",
+    heroTitle: "Nome do Produto:",
+    heroSubtitle: "A promessa em uma linha de impacto",
+    heroDesc: "Descreva em uma ou duas frases o problema que o produto resolve e o resultado que a pessoa terá ao final.",
+
+    priceOld: "70,00",
+    priceNew: "16,90",
+    finalTag: "Oferta de lançamento",
+
+    ctaLabel: "Adquirir agora",
+    finalCtaLabel: "Quero garantir o meu",
+    checkoutUrl: "#", // troque pelo link do seu checkout
+
+    // countdown: defina quantas horas a oferta ainda dura a partir do carregamento da página
+    countdownHours: 6,
+
+    contentsTitle: "O que você vai encontrar",
+    contentsItems: [
+      {
+        label: "Parte 01",
+        title: "Fundamentos",
+        text: "A base do assunto explicada do zero, sem pressupor conhecimento prévio."
+      },
+      {
+        label: "Parte 02",
+        title: "Aplicação prática",
+        text: "Como colocar o conteúdo em prática com exemplos e passo a passo."
+      },
+      {
+        label: "Parte 03",
+        title: "Aprofundamento",
+        text: "Os detalhes que fazem diferença para quem já domina o básico."
+      }
+    ],
+
+    guaranteeTitle: "Garantia de satisfação",
+    guaranteeText: "Se por qualquer motivo o conteúdo não atender às suas expectativas, oferecemos reembolso total em até 7 dias após a compra. Você não tem nada a perder.",
+
+    benefits: [
+      { title: "Conteúdo exclusivo", text: "Material compilado e revisado com cuidado.", icon: "doc" },
+      { title: "Entrega imediata", text: "Receba o acesso em segundos após a confirmação.", icon: "download" },
+      { title: "Compra segura", text: "Pagamento processado com criptografia de ponta.", icon: "shield" },
+      { title: "Acesso vitalício", text: "Acesse quantas vezes quiser, para sempre.", icon: "clock" }
+    ],
+
+    finalTitle: "Garanta sua cópia deste material agora mesmo.",
+    finalMicrocopy: "Pagamento seguro · Entrega instantânea · Acesso vitalício",
+
+    footerBrand: "MARCA <strong>DO PRODUTO</strong>",
+    footerCopy: "© 2026 · Todos os direitos reservados"
+  };
+
+  const ICONS = {
+    doc: '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M9 15l2 2 4-4"/></svg>',
+    download: '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 3v12"/><path d="M7 10l5 5 5-5"/><path d="M4 19h16"/></svg>',
+    shield: '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 2l8 4v6c0 5-3.4 8.4-8 10-4.6-1.6-8-5-8-10V6l8-4z"/></svg>',
+    clock: '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>'
+  };
+
+  /* ------------------------------------------------------------
+     Preenche o DOM a partir do CONFIG
+     ------------------------------------------------------------ */
+  function paint(){
+    document.querySelectorAll('#bar-old-price').forEach(el => el.textContent = 'R$ ' + CONFIG.priceOld);
+    document.querySelectorAll('#bar-new-price').forEach(el => el.textContent = 'R$ ' + CONFIG.priceNew);
+
+    document.getElementById('hero-eyebrow').textContent = CONFIG.eyebrow;
+    document.getElementById('hero-title').textContent = CONFIG.heroTitle;
+    document.getElementById('hero-subtitle').textContent = CONFIG.heroSubtitle;
+    document.getElementById('hero-desc').textContent = CONFIG.heroDesc;
+    document.getElementById('price-old-1').textContent = 'R$ ' + CONFIG.priceOld;
+    document.getElementById('price-new-1').textContent = CONFIG.priceNew;
+    document.getElementById('cta-hero').textContent = CONFIG.ctaLabel;
+    document.getElementById('cta-hero').href = CONFIG.checkoutUrl;
+
+    document.getElementById('contents-title').textContent = CONFIG.contentsTitle;
+    const cgrid = document.getElementById('contents-grid');
+    cgrid.innerHTML = CONFIG.contentsItems.map(item => `
+      <div class="reveal">
+        <span class="item-index">${item.label}</span>
+        <h4>${item.title}</h4>
+        <p>${item.text}</p>
+      </div>
+    `).join('');
+
+    document.getElementById('guarantee-title').textContent = CONFIG.guaranteeTitle;
+    document.getElementById('guarantee-text').textContent = CONFIG.guaranteeText;
+
+    const bgrid = document.getElementById('benefit-grid');
+    bgrid.innerHTML = CONFIG.benefits.map(b => `
+      <div class="benefit-card">
+        ${ICONS[b.icon] || ''}
+        <h5>${b.title}</h5>
+        <p>${b.text}</p>
+      </div>
+    `).join('');
+
+    document.getElementById('final-eyebrow').textContent = CONFIG.eyebrow;
+    document.getElementById('final-title').textContent = CONFIG.finalTitle;
+    document.getElementById('price-old-2').textContent = 'R$ ' + CONFIG.priceOld;
+    document.getElementById('price-new-2').textContent = CONFIG.priceNew;
+    document.getElementById('final-tag').textContent = CONFIG.finalTag;
+    document.getElementById('cta-final').textContent = CONFIG.finalCtaLabel;
+    document.getElementById('cta-final').href = CONFIG.checkoutUrl;
+    document.getElementById('final-microcopy').textContent = CONFIG.finalMicrocopy;
+
+    document.getElementById('footer-brand').innerHTML = CONFIG.footerBrand;
+    document.getElementById('footer-copy').textContent = CONFIG.footerCopy;
+  }
+
+  /* ------------------------------------------------------------
+     Contagem regressiva da oferta
+     ------------------------------------------------------------ */
+  function startCountdown(){
+    const end = Date.now() + CONFIG.countdownHours * 60 * 60 * 1000;
+    const el = document.getElementById('countdown');
+    function tick(){
+      const diff = Math.max(0, end - Date.now());
+      const h = String(Math.floor(diff / 3600000)).padStart(2, '0');
+      const m = String(Math.floor((diff % 3600000) / 60000)).padStart(2, '0');
+      const s = String(Math.floor((diff % 60000) / 1000)).padStart(2, '0');
+      el.textContent = `${h}:${m}:${s}`;
+      if (diff > 0) requestAnimationFrame(() => setTimeout(tick, 250));
+    }
+    tick();
+  }
+
+  /* ------------------------------------------------------------
+     Reveal ao rolar a página
+     ------------------------------------------------------------ */
+  function startReveal(){
+    const items = document.querySelectorAll('.reveal');
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting){
+          entry.target.classList.add('is-visible');
+          io.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.15 });
+    items.forEach(el => io.observe(el));
+  }
+
+  paint();
+  startCountdown();
+  startReveal();
+  </script>
+
+</body>
+</html>
